@@ -2,8 +2,12 @@
     <div class="mt-4 absolute top-0 right-0 p-4">
         <a href="/">
             <button type="button"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                Home
+                class="bg-gray-800 hover:bg-gray-900 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none">
+                <div class="flex items-center gap-2 text-white">
+                    <Icon name="line-md:home" class="w-6 h-6" />
+                    Home
+                </div>
+
             </button>
         </a>
     </div>
@@ -22,8 +26,11 @@
                     class="border border-gray-300 rounded-lg px-4 py-2 mb-4 w-full" /> -->
                 <div class="text-center">
                     <button type="submit"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                        เข้าสู่ระบบ
+                        class="bg-gray-800 hover:bg-gray-900 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none">
+                        <div class="flex items-center gap-2 text-white">
+                            <Icon name="mdi:login" class=" w-6 h-6" />
+                            เข้าสู่ระบบ
+                        </div>
                     </button>
                 </div>
             </div>
