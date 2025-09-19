@@ -1,6 +1,6 @@
 <template>
     <div class="top-0 right-0 p-4 justify-end flex">
-        <a href="/">
+        <NuxtLink to="/">
             <button type="button"
                 class="bg-slate-600 hover:bg-slate-500 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none cursor-pointer">
                 <div class="flex items-center gap-2 text-white">
@@ -8,12 +8,11 @@
                     Home
                 </div>
             </button>
-        </a>
+        </NuxtLink>
     </div>
 
     <div>
-        <form action="assets/main.py" method="post"
-            class="max-w-md mx-auto mt-10 p-6 border border-gray-300 rounded-lg shadow-md">
+        <form action="" method="post" class="max-w-md mx-auto mt-10 p-6 border border-gray-300 rounded-lg shadow-md">
             <div class="text-center bg-slate-600 text-white p-6 rounded-t-lg">
                 <h1>เข้าระบบด้วย ICIT Account</h1>
             </div>
@@ -21,9 +20,9 @@
                 <h3>ICIT Account</h3>
                 <input type="text" placeholder="" required
                     class="border border-gray-300 rounded-lg px-4 py-2 mb-4 w-full" />
-                <!-- <h3>Password</h3>
+                <h3>Password</h3>
                 <input type="password" placeholder="" required
-                    class="border border-gray-300 rounded-lg px-4 py-2 mb-4 w-full" /> -->
+                    class="border border-gray-300 rounded-lg px-4 py-2 mb-4 w-full" />
                 <div class="text-center">
                     <button type="submit"
                         class="bg-slate-600 hover:bg-slate-500 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none cursor-pointer">
@@ -39,4 +38,8 @@
 
 </template>
 
-<style></style>
+<script setup>
+definePageMeta({
+    layout: 'plain'
+})
+</script>

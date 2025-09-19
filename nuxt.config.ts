@@ -9,4 +9,9 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+  // runtimeConfig: {
+  //   public: {
+  //     apiBase: process.env.API_BASE || "http://atom888.3bbddns.com:16251/",
+  //   },
+  // },
 });
