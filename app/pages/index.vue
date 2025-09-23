@@ -4,7 +4,7 @@
       <h1 class="text-5xl text-white font-bold">RAG</h1>
     </div>
 
-    <div class="pt-4 top-0 right-0 p-4">
+    <div class="pt-4 top-0 right-0 p-4" v-if="!isLoggedIn">
       <NuxtLink to="/login">
         <button type="button"
           class="bg-slate-600 hover:bg-slate-500 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none cursor-pointer">
@@ -16,7 +16,9 @@
       </NuxtLink>
     </div>
 
-    <UserMenu />
+    <div class="pt-4 top-0 right-0 p-4" v-else>
+      <UserMenu />
+    </div>
   </div>
 
   <div class="flex gap-6 p-4 text-[1.2rem] font-extrabold text-gray-100">
@@ -168,4 +170,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 const activeTab = ref<'all' | 'recommended' | 'mine'>('all')
+const { isLoggedIn } = useSession()
 </script>

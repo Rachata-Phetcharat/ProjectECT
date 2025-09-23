@@ -22,7 +22,7 @@
                     </button>
 
                     <div id="crud-modal" tabindex="-1" aria-hidden="true"
-                        class="hidden fixed inset-0 z-50 flex justify-center items-center w-full h-full backdrop-blur-sm bg-black/50">
+                        :class="['fixed inset-0 z-50 justify-center items-center w-full h-full backdrop-blur-sm bg-black/50', isModalOpen ? 'flex' : 'hidden']">
 
                         <div class="relative p-4 w-full max-w-5xl max-h-full">
                             <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
@@ -174,7 +174,13 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+
 definePageMeta({
     layout: 'plain'
 })
+
+const isModalOpen = ref(false)
+
+// Optional: Add event listeners for modal open/close if needed
 </script>
