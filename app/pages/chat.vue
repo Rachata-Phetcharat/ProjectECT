@@ -1,93 +1,165 @@
 <template>
-    <div class="bg-slate-900 min-h-screen flex flex-col">
-        <!-- Top bar -->
-        <div class="px-10 py-2 flex justify-between items-center bg-slate-900">
-            <div class="pt-2 text-white truncate">
-                <span class="opacity-70">Channel ID: </span>{{ channelId || '-' }}
+    <div class="bg-[var(--bg)] text-[var(--fg)] min-h-[100dvh]">
+        <!-- Top bar (อ้างอิงความสูง) -->
+        <div ref="chromeTop"
+            class="px-6 lg:px-10 py-3 flex justify-between items-center border-b border-[var(--card-border)] bg-[var(--card)]">
+            <div class="flex items-center gap-3 min-w-0">
+                <!-- <NuxtLink to="/"
+                    class="hidden sm:inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm border border-[var(--card-border)] bg-[var(--card)] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]">
+                    <Icon name="lucide:arrow-left" class="w-4 h-4" />
+                    กลับ
+                </NuxtLink> -->
+                <div class="pt-1 truncate">
+                    <span class="opacity-70">Channel ID:</span>
+                    <span class="font-medium">&nbsp;{{ channelId || '-' }}</span>
+                </div>
             </div>
             <UserMenu />
         </div>
 
         <!-- Error line -->
-        <div v-if="pageErr" class="px-10 text-rose-300 text-sm">
+        <div v-if="pageErr" class="px-6 lg:px-10 text-rose-600 text-sm py-2">
             {{ pageErr }}
         </div>
 
-        <div class="flex flex-1 gap-4 px-10 py-4 overflow-hidden">
-            <!-- Left: Sources / Files -->
-            <div class="bg-slate-600 rounded-lg p-4 basis-1/4 overflow-auto">
-                <div class="text-white font-bold text-lg mb-4">แหล่งข้อมูล</div>
-                <hr class="border-gray-400" />
+        <!-- สองพาเนล: กำหนดความสูงด้วย style เดียวกัน -->
+        <main class="px-6 lg:px-10 py-4">
+            <div class="grid grid-cols-12 gap-4" :style="{ height: contentH + 'px' }">
+                <!-- LEFT: แหล่งข้อมูล -->
+                <section class="col-span-12 md:col-span-4 lg:col-span-3 xl:col-span-3
+                 h-full rounded-xl border border-[var(--card-border)] bg-[var(--card)]
+                 flex flex-col overflow-hidden">
+                    <!-- header -->
+                    <div class="p-4 border-b border-[var(--card-border)]">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="font-semibold text-lg">แหล่งข้อมูล</div>
+                            <button type="button" @click="openUploadModal" class="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium cursor-pointer
+                       bg-[var(--brand)] text-[var(--brand-contrast)] hover:brightness-110
+                       focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]">
+                                <Icon name="line-md:plus" class="w-4 h-4" />
+                                เพิ่มไฟล์
+                            </button>
+                        </div>
 
-                <button type="button" @click="openUploadModal"
-                    class="w-full bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-700 focus:outline-none focus:ring-2 mt-4 cursor-pointer">
-                    เพิ่มแหล่งข้อมูล
-                </button>
+                        <!-- ค้นหาไฟล์ -->
+                        <div class="mt-3 relative">
+                            <Icon name="lucide:search"
+                                class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]" />
+                            <input v-model="fileQuery" type="text" placeholder="ค้นหาไฟล์ในช่องนี้…" class="w-full rounded-lg pl-9 pr-3 py-2 bg-[var(--card)] text-[var(--fg)]
+                       border border-[var(--card-border)] placeholder:text-[var(--muted)]
+                       focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]" />
+                        </div>
+                    </div>
 
-                <!-- Files list -->
-                <ul class="mt-4 space-y-2">
-                    <li v-for="f in files" :key="f.files_id || f.fileId"
-                        class="group flex items-center p-2 text-base font-normal text-white rounded-lg hover:bg-gray-700">
-                        <Icon name="line-md:file-document" class="w-5 h-5 me-3" />
-                        <span class="flex-1 whitespace-nowrap truncate">
-                            {{ f.original_filename }}
-                        </span>
+                    <!-- รายการไฟล์ (เลื่อนในกรอบนี้) -->
+                    <div class="flex-1 min-h-0 overflow-y-auto p-3">
+                        <ul class="space-y-2">
+                            <li v-for="f in filesView" :key="f.files_id || f.fileId"
+                                class="group flex items-center gap-2 p-2 rounded-lg border border-[var(--card-border)] hover:bg-black/5 transition">
+                                <Icon name="line-md:file-document" class="w-5 h-5 opacity-80" />
+                                <span class="flex-1 whitespace-nowrap truncate">{{ f.original_filename }}</span>
+                                <button
+                                    class="ml-2 rounded-md px-2 py-1 text-xs font-semibold border border-rose-200 text-rose-700 hover:bg-rose-50 cursor-pointer"
+                                    :disabled="deletingIds.has(fileKey(f))" @click="deleteFile(f)">
+                                    {{ deletingIds.has(fileKey(f)) ? 'ลบ...' : 'ลบ' }}
+                                </button>
+                            </li>
 
-                        <button
-                            class="ml-2 rounded bg-rose-600 px-2 py-1 text-xs font-semibold text-white hover:bg-rose-500 cursor-pointer"
-                            :disabled="deletingIds.has(fileKey(f))" @click="deleteFile(f)">
-                            {{ deletingIds.has(fileKey(f)) ? 'ลบ...' : 'ลบ' }}
-                        </button>
-                    </li>
+                            <li v-if="!loading && filesView.length === 0" class="p-4">
+                                <div
+                                    class="rounded-lg border-2 border-dashed border-[var(--card-border)] bg-[var(--bg)]/60 text-center py-8">
+                                    <Icon name="lucide:inbox" class="w-7 h-7 mx-auto opacity-60" />
+                                    <p class="mt-2 text-sm text-[var(--muted)]">ยังไม่มีไฟล์ หรือไม่พบไฟล์ที่ค้นหา</p>
+                                    <div class="mt-3">
+                                        <button type="button" @click="openUploadModal" class="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium cursor-pointer
+                             bg-[var(--brand)] text-[var(--brand-contrast)] hover:brightness-110
+                             focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]">
+                                            <Icon name="line-md:plus" class="w-4 h-4" />
+                                            อัปโหลดไฟล์
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
 
-                    <li v-if="!loading && files.length === 0" class="p-2 text-gray-200 text-sm opacity-80">
-                        — ยังไม่มีไฟล์ในช่องนี้ —
-                    </li>
-                </ul>
+                <!-- RIGHT: แชท -->
+                <section class="col-span-12 md:col-span-8 lg:col-span-9 xl:col-span-9
+                 h-full rounded-xl border border-[var(--card-border)] bg-[var(--card)]
+                 flex flex-col overflow-hidden">
+                    <!-- header -->
+                    <div class="p-4 border-b border-[var(--card-border)] flex items-center justify-between">
+                        <div class="font-semibold text-lg">แชท</div>
+                        <!-- <div class="text-xs text-[var(--muted)]">UI แชทตัวอย่างเท่านั้น</div> -->
+                    </div>
+
+                    <!-- ข้อความ (เลื่อนในกรอบนี้) -->
+                    <div class="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
+                        <div
+                            class="max-w-[70%] rounded-2xl px-4 py-3 border border-[var(--card-border)] bg-[var(--bg)]">
+                            👋 ยินดีต้อนรับ! อัปโหลดไฟล์ทางซ้าย แล้วเริ่มถามได้เลย
+                        </div>
+                        <div
+                            class="max-w-[70%] ml-auto rounded-2xl px-4 py-3 border border-[var(--card-border)] bg-[var(--card)]">
+                            ข้อความของฉันจะอยู่ด้านขวา
+                        </div>
+                    </div>
+
+                    <!-- composer -->
+                    <div class="p-4 border-t border-[var(--card-border)] bg-[var(--card)]">
+                        <div
+                            class="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] flex items-center gap-2 px-3 py-2 shadow-sm">
+                            <button type="button"
+                                class="rounded-md px-2 py-1.5 text-sm border border-[var(--card-border)] hover:brightness-95">
+                                <Icon name="lucide:paperclip" class="w-4 h-4" />
+                            </button>
+                            <input placeholder="พิมพ์ข้อความ…"
+                                class="flex-1 bg-transparent outline-none placeholder:text-[var(--muted)]" />
+                            <button class="rounded-md px-3 py-1.5 text-sm font-medium bg-[var(--brand)] text-[var(--brand-contrast)]
+                       hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
+                                type="button">
+                                ส่ง
+                            </button>
+                        </div>
+                    </div>
+                </section>
             </div>
-
-            <!-- Right: Chat area (placeholder) -->
-            <div class="bg-slate-600 rounded-lg p-4 flex-1 flex flex-col">
-                <div class="text-white font-bold text-lg mb-4">แชท</div>
-                <hr class="border-gray-400" />
-                <div class="mt-4 px-8 text-white/80">ใส่ UI แชทของคุณได้ตามต้องการ</div>
-            </div>
-        </div>
+        </main>
 
         <!-- Upload Modal -->
         <div v-if="uploadOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
             @click.self="closeUploadModal">
-            <div class="w-full max-w-2xl rounded-xl bg-gray-800 border border-gray-700">
-                <div class="flex items-center justify-between p-4 border-b border-gray-700">
-                    <h3 class="text-white text-lg font-semibold">อัปโหลดไฟล์เข้าช่อง</h3>
-                    <button class="cursor-pointer text-gray-300 hover:text-white" @click="closeUploadModal">
+            <div class="w-full max-w-2xl rounded-xl border border-[var(--card-border)] bg-[var(--card)] shadow-lg">
+                <div class="flex items-center justify-between p-4 border-b border-[var(--card-border)]">
+                    <h3 class="text-lg font-semibold">อัปโหลดไฟล์เข้าช่อง</h3>
+                    <button class="cursor-pointer text-[var(--muted)] hover:text-[var(--fg)]" @click="closeUploadModal">
                         <Icon name="line-md:close" class="w-6 h-6" />
                     </button>
                 </div>
 
                 <div class="p-5 space-y-4">
-                    <p class="text-sm text-gray-300">
-                        ช่อง: <span class="font-semibold text-white">{{ channelId || '-' }}</span>
+                    <p class="text-sm">
+                        ช่อง: <span class="font-semibold">{{ channelId || '-' }}</span>
                     </p>
 
-                    <!-- Dropzone -->
-                    <label for="files"
-                        class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-gray-700 hover:bg-gray-600 border-gray-500">
-                        <div class="flex flex-col items-center justify-center p-6 text-gray-200">
-                            <Icon name="line-md:cloud-upload" class="w-8 h-8 mb-3" />
-                            <p class="text-sm"><span class="font-semibold">คลิกเพื่อเลือก</span> หรือ ลากไฟล์มาวาง</p>
+                    <label for="files" class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer
+                   border-[var(--card-border)] bg-[var(--bg)] hover:bg-black/5 transition">
+                        <div class="flex flex-col items-center justify-center p-6 text-[var(--muted)]">
+                            <Icon name="line-md:cloud-upload" class="w-8 h-8 mb-3 opacity-80" />
+                            <p class="text-sm"><span class="font-semibold text-[var(--fg)]">คลิกเพื่อเลือก</span> หรือ
+                                ลากไฟล์มาวาง</p>
                             <p class="text-xs opacity-80">รองรับหลายไฟล์ (แนะนำ PDF)</p>
                         </div>
                         <input id="files" ref="fileInput" type="file" class="hidden" multiple @change="pickFiles" />
                     </label>
 
-                    <!-- Selected list -->
-                    <div v-if="picked.length" class="text-sm text-gray-200">
+                    <div v-if="picked.length" class="text-sm">
                         <div class="mb-2 font-semibold">ไฟล์ที่เลือก ({{ picked.length }})</div>
                         <ul class="space-y-1 max-h-40 overflow-auto pr-1">
                             <li v-for="(f, i) in picked" :key="i" class="flex items-center justify-between">
                                 <span class="truncate">{{ f.name }}</span>
-                                <button class="text-rose-300 hover:text-rose-200 cursor-pointer"
+                                <button class="text-rose-700 hover:text-rose-600 cursor-pointer"
                                     @click="removePicked(i)">ลบออก</button>
                             </li>
                         </ul>
@@ -95,19 +167,19 @@
 
                     <div class="flex items-center justify-end gap-2">
                         <button type="button"
-                            class="cursor-pointer rounded-lg bg-slate-600 px-4 py-2 text-white hover:bg-slate-500"
+                            class="cursor-pointer rounded-lg px-4 py-2 border border-[var(--card-border)] bg-[var(--card)] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
                             @click="closeUploadModal">
                             ยกเลิก
                         </button>
                         <button type="button"
-                            class="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-500 disabled:opacity-60"
+                            class="cursor-pointer rounded-lg px-4 py-2 text-[var(--brand-contrast)] bg-[var(--brand)] hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] disabled:opacity-60"
                             :disabled="uploading || picked.length === 0 || !channelId" @click="uploadFiles">
                             {{ uploading ? 'อัปโหลด...' : 'อัปโหลด' }}
                         </button>
                     </div>
 
-                    <p v-if="uploadErr" class="text-rose-300 text-sm">{{ uploadErr }}</p>
-                    <p v-if="uploadOk" class="text-emerald-400 text-sm">{{ uploadOk }}</p>
+                    <p v-if="uploadErr" class="text-rose-600 text-sm">{{ uploadErr }}</p>
+                    <p v-if="uploadOk" class="text-emerald-600 text-sm">{{ uploadOk }}</p>
                 </div>
             </div>
         </div>
@@ -127,7 +199,21 @@ const route = useRoute()
 const { public: { apiBase } } = useRuntimeConfig()
 const { token } = useSession()
 
-// ------- state
+/* ===== height sync: คำนวณความสูงพื้นที่คอนเทนต์ ===== */
+const chromeTop = ref<HTMLElement | null>(null)
+const contentH = ref(0)
+const recalc = () => {
+    const bottom = chromeTop.value?.getBoundingClientRect().bottom ?? 0
+    const outerPad = 16 + 16 // padding top/bottom ของ <main> (px) ปรับได้ตามจริง
+    contentH.value = Math.max(0, window.innerHeight - bottom - outerPad)
+}
+onMounted(() => {
+    recalc()
+    window.addEventListener('resize', recalc)
+})
+onBeforeUnmount(() => window.removeEventListener('resize', recalc))
+
+/* ===== state เดิม ===== */
 const channelId = computed<number | null>(() => {
     const v = Number(route.query.id)
     return Number.isFinite(v) && v > 0 ? v : null
@@ -137,7 +223,7 @@ const loading = ref(false)
 const files = ref<FileItem[]>([])
 const deletingIds = reactive(new Set<string | number>())
 
-// upload modal
+/* upload modal */
 const uploadOpen = ref(false)
 const picked = ref<File[]>([])
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -145,7 +231,15 @@ const uploading = ref(false)
 const uploadErr = ref('')
 const uploadOk = ref('')
 
-// ------- helpers
+/* search ในรายการไฟล์ */
+const fileQuery = ref('')
+const filesView = computed(() => {
+    const k = fileQuery.value.trim().toLowerCase()
+    if (!k) return files.value
+    return files.value.filter(f => (f.original_filename || '').toLowerCase().includes(k))
+})
+
+/* helpers */
 const authHeaders = () => {
     const h: Record<string, string> = { Accept: 'application/json' }
     if (token.value) h.Authorization = `Bearer ${token.value}`
@@ -153,7 +247,7 @@ const authHeaders = () => {
 }
 const fileKey = (f: FileItem) => f.files_id ?? f.fileId ?? `name:${f.original_filename}`
 
-// ------- API
+/* API */
 const loadChannelFiles = async () => {
     if (!channelId.value) return
     pageErr.value = ''
@@ -164,7 +258,6 @@ const loadChannelFiles = async () => {
             headers: authHeaders(),
             credentials: 'include',
         })
-        // เดาว่า backend ส่ง files เป็น array (ชื่อฟิลด์อาจต่าง — รองรับหลายชื่อ)
         const arr = res?.files ?? res?.data?.files ?? []
         files.value = Array.isArray(arr) ? arr : []
     } catch (e: any) {
@@ -183,17 +276,15 @@ const uploadFiles = async () => {
         const fd = new FormData()
         fd.append('channel_id', String(channelId.value))
         picked.value.forEach(f => fd.append('files', f))
-
         await $fetch(`${apiBase}/files/upload`, {
             method: 'POST',
             body: fd,
-            headers: authHeaders(), // อย่าใส่ Content-Type เอง ให้ browser จัดการ boundary
+            headers: authHeaders(),
             credentials: 'include',
         })
-
         uploadOk.value = 'อัปโหลดสำเร็จ'
         picked.value = []
-        fileInput.value?.value && (fileInput.value.value = '')
+        if (fileInput.value?.value) fileInput.value.value = ''
         await loadChannelFiles()
     } catch (e: any) {
         uploadErr.value = e?.data?.detail || e?.message || 'อัปโหลดไม่สำเร็จ'
@@ -214,14 +305,13 @@ const deleteFile = async (f: FileItem) => {
         })
         await loadChannelFiles()
     } catch (e) {
-        // แสดงบนแถบ error ด้านบนให้เห็นรวม
         pageErr.value = 'ลบไฟล์ไม่สำเร็จ'
     } finally {
         deletingIds.delete(fileKey(f))
     }
 }
 
-// ------- modal controls
+/* modal controls */
 const openUploadModal = () => {
     if (!channelId.value) {
         pageErr.value = 'ไม่พบ channel_id (โปรดเปิดจากลิงก์ /chat?id=<id>)'
@@ -242,7 +332,7 @@ const pickFiles = (e: Event) => {
 }
 const removePicked = (i: number) => picked.value.splice(i, 1)
 
-// init
+/* init */
 onMounted(loadChannelFiles)
 watch(channelId, () => loadChannelFiles())
 </script>

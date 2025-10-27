@@ -1,0 +1,133 @@
+/* ======================================================================
+   tokens.css — Design Tokens (สีและโทน)
+   วิธีใช้:
+   1) import ใน assets/main.css  ->  @import "./tokens.css";
+   2) อ้างด้วย Tailwind arbitrary values เช่น:
+        bg-[var(--bg)]  text-[var(--fg)]  border-[var(--card-border)]
+        bg-[var(--brand)] text-[var(--brand-contrast)] focus:ring-[var(--focus-ring)]
+   3) เปลี่ยนธีมทั้งเว็บ: ใส่ class .theme-dark หรือ .theme-stripe บน <html> / <body>
+   ====================================================================== */
+
+
+/* ----------------------------------------------------------------------
+   :root  = Light / Clean (GitHub/Notion-ish)
+   ---------------------------------------------------------------------- */
+:root {
+    /* พื้นหลังหลักของหน้า — #FAFAFA (Zinc 50: "Almost White") */
+    --bg: #FAFAFA;
+
+    /* สีตัวอักษรหลัก — #0A0A0A (Neutral 950: "Almost Black") */
+    --fg: #0A0A0A;
+
+    /* พื้นหลังการ์ด/คอมโพเนนต์ — #FFFFFF (White) */
+    --card: #FFFFFF;
+
+    /* สีเส้นขอบการ์ด — #E5E7EB (Zinc 200: "Light Gray") */
+    --card-border: #E5E7EB;
+
+    /* สีแบรนด์/ปุ่มหลัก — #0EA5E9 (Sky 500: "Bright Sky Blue") */
+    --brand: #0EA5E9;
+
+    /* สีตัวอักษรบนปุ่มแบรนด์ — #FFFFFF (White) */
+    --brand-contrast: #FFFFFF;
+
+    /* สีตัวอักษรรอง/คำอธิบาย — #6B7280 (Gray 500: "Slate Gray") */
+    --muted: #6B7280;
+
+    /* สีลิงก์ — #0284C7 (Sky 600: "Deep Sky Blue") */
+    --link: #0284C7;
+
+    /* สีวงแหวนโฟกัส (focus ring) — #38BDF8 (Sky 400: "Sky Light") */
+    --focus-ring: #38BDF8;
+}
+
+
+/* ----------------------------------------------------------------------
+   .theme-dark  = Dark / Monochrome Pro
+   ใช้โดยใส่ class="theme-dark" ที่ <html> หรือ <body>
+   ---------------------------------------------------------------------- */
+.theme-dark {
+    /* พื้นหลังหลัก — #0A0A0A (Neutral 950: "Almost Black") */
+    --bg: #0A0A0A;
+
+    /* สีตัวอักษรหลัก — #E5E7EB (Zinc 200: "Light Gray") */
+    --fg: #E5E7EB;
+
+    /* พื้นหลังการ์ด — #111111 (Neutral 900: "Eerie Black") */
+    --card: #111111;
+
+    /* สีเส้นขอบการ์ด — #1F2937 (Slate 800: "Charcoal Slate") */
+    --card-border: #1F2937;
+
+    /* สีแบรนด์/ปุ่มหลัก — #60A5FA (Blue 400: "Cornflower Blue") */
+    --brand: #60A5FA;
+
+    /* สีตัวอักษรบนปุ่มแบรนด์ — #0B1220 (Indigo 950: "Deep Navy") */
+    --brand-contrast: #0B1220;
+
+    /* สีตัวอักษรรอง — #9CA3AF (Gray 400: "Cool Gray") */
+    --muted: #9CA3AF;
+
+    /* สีลิงก์ — #3B82F6 (Blue 500: "Azure") */
+    --link: #3B82F6;
+
+    /* สีวงแหวนโฟกัส — #60A5FA (Blue 400: "Cornflower Blue") */
+    --focus-ring: #60A5FA;
+}
+
+
+/* ----------------------------------------------------------------------
+   .theme-stripe  = Stripe-ish (Midnight Indigo + Purple/Cyan)
+   ใช้โดยใส่ class="theme-stripe" ที่ <html> หรือ <body>
+   ---------------------------------------------------------------------- */
+.theme-stripe {
+    /* พื้นหลังหลัก — #0F1020 ("Midnight Indigo") */
+    --bg: #0F1020;
+
+    /* สีตัวอักษรหลัก — #E6E6FF ("Soft Lavender White") */
+    --fg: #E6E6FF;
+
+    /* พื้นหลังการ์ดโปร่ง — rgba(255,255,255,0.06) ("Frost Glass") */
+    --card: rgba(255, 255, 255, 0.06);
+
+    /* สีเส้นขอบการ์ดโปร่ง — rgba(255,255,255,0.16) ("Frost Border") */
+    --card-border: rgba(255, 255, 255, 0.16);
+
+    /* สีแบรนด์/ปุ่มหลัก — #635BFF ("Stripe Purple") */
+    --brand: #635BFF;
+
+    /* สีตัวอักษรบนปุ่มแบรนด์ — #FFFFFF (White) */
+    --brand-contrast: #FFFFFF;
+
+    /* สีตัวอักษรรอง — #B6B7D3 ("Periwinkle Gray") */
+    --muted: #B6B7D3;
+
+    /* สีลิงก์/แอ็กเซนต์ — #00D4FF ("Cyan Neon") */
+    --link: #00D4FF;
+
+    /* สีวงแหวนโฟกัส — #00D4FF ("Cyan Neon") */
+    --focus-ring: #00D4FF;
+}
+
+
+/* ======================================================================
+   ตัวอย่างการใช้งาน (คัดลอกเป็นคอมเมนต์แปะไว้ดูได้)
+   ----------------------------------------------------------------------
+   <div class="min-h-screen bg-[var(--bg)] text-[var(--fg)]">
+     <div class="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
+       การ์ดตัวอย่าง
+     </div>
+
+     <a class="text-[var(--link)] underline">ลิงก์</a>
+
+     <button class="px-4 py-2 rounded-lg bg-[var(--brand)] text-[var(--brand-contrast)] hover:brightness-110 transition">
+       ปุ่มหลัก
+     </button>
+
+     <input class="border border-[var(--card-border)] bg-[var(--card)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] rounded-lg px-3 py-2" />
+   </div>
+
+   // เปลี่ยนธีมทั้งเว็บ:
+   // <html class="theme-dark"> ... </html>
+   // หรือ <body class="theme-stripe"> ... </body>
+   ====================================================================== */
