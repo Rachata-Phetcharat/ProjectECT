@@ -6,13 +6,18 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   typescript: { strict: true },
   modules: ["@nuxt/ui", "@nuxt/eslint", "@nuxt/icon"],
-  css: ["~/assets/main.css"],
+  css: ["~/assets/main.css", "~/assets/tokens.css"],
   vite: {
     plugins: [tailwindcss()],
   },
   runtimeConfig: {
     public: {
-      apiBase: "http://atom888.3bbddns.com:16251",
+      apiBase: "https://fastapi888.lukeenortaed.site",
+    },
+  },
+  app: {
+    head: {
+      titleTemplate: "RAG",
     },
   },
 });

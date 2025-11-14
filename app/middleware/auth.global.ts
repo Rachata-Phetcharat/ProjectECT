@@ -1,6 +1,6 @@
 export default defineNuxtRouteMiddleware(async (to) => {
   const { isLoggedIn, checkSession } = useSession();
-  const publicRoutes = ["/", "/login"];
+  const publicRoutes = ["/", "/login", "/chat"];
 
   if (!isLoggedIn.value) await checkSession();
 

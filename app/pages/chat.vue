@@ -10,16 +10,11 @@
                     กลับ
                 </NuxtLink> -->
                 <div class="pt-1 truncate">
-                    <span class="opacity-70">Channel ID:</span>
-                    <span class="font-medium">&nbsp;{{ channelId || '-' }}</span>
+                    <span class="opacity-70">Channel : </span>
+                    <span class="font-medium">&nbsp;{{ channelTitle || '-' }}</span>
                 </div>
             </div>
             <UserMenu />
-        </div>
-
-        <!-- Error line -->
-        <div v-if="pageErr" class="px-6 lg:px-10 text-rose-600 text-sm py-2">
-            {{ pageErr }}
         </div>
 
         <!-- สองพาเนล: กำหนดความสูงด้วย style เดียวกัน -->
@@ -218,6 +213,7 @@ const channelId = computed<number | null>(() => {
     const v = Number(route.query.id)
     return Number.isFinite(v) && v > 0 ? v : null
 })
+const channelTitle = ref<string>('')
 const pageErr = ref('')
 const loading = ref(false)
 const files = ref<FileItem[]>([])
@@ -258,6 +254,7 @@ const loadChannelFiles = async () => {
             headers: authHeaders(),
             credentials: 'include',
         })
+        channelTitle.value = res?.title || `Channel #${channelId.value}`
         const arr = res?.files ?? res?.data?.files ?? []
         files.value = Array.isArray(arr) ? arr : []
     } catch (e: any) {

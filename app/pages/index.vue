@@ -9,7 +9,6 @@
           </div> -->
           <div class="truncate">
             <h1 class="text-xl sm:text-2xl font-bold leading-tight">RAG</h1>
-            <p class="text-xs text-[var(--muted)] hidden sm:block">สำรวจแชนแนล แนะนำ และจัดการของคุณ</p>
           </div>
         </div>
 
@@ -52,7 +51,7 @@
               </button>
             </template>
             <button :class="segClass(activeTab === 'recommended')" @click="activeTab = 'recommended'">
-              แนะนำ
+              สาธารณะ
             </button>
           </div>
         </div>
@@ -82,7 +81,7 @@
       <!-- All -->
       <section v-if="isLoggedIn" v-show="activeTab === 'all'">
         <div class="mb-3">
-          <h2 class="text-xl sm:text-2xl font-bold">แชนแนลที่แนะนำ</h2>
+          <h2 class="text-xl sm:text-2xl font-bold">แชนแนลสาธารณะ</h2>
         </div>
         <ChannelGrid :items="publicChannels" />
 

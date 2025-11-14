@@ -9,7 +9,6 @@
                 </div> -->
                 <div>
                     <h1 class="text-xl sm:text-2xl font-bold">จัดการแชนแนล</h1>
-                    <p class="text-xs text-[var(--muted)] hidden sm:block">สร้าง/ค้นหา จัดระเบียบแชนแนลของคุณ</p>
                 </div>
             </div>
 
@@ -128,7 +127,7 @@
                 </div>
 
                 <!-- เนื้อการ์ด -->
-                <div class="pr-2">
+                <!-- <div class="pr-2">
                     <h3 class="line-clamp-1 text-lg font-bold">
                         {{ ch.title }}
                     </h3>
@@ -136,14 +135,31 @@
                     <p class="mt-2 text-sm text-[var(--muted)] line-clamp-2">
                         {{ ch.description || '—' }}
                     </p>
+                </div> -->
+
+                <div class="pr-2 pointer-events-none">
+                    <h3 class="mb-1 line-clamp-1 text-xl font-bold text-[var(--fg)]">
+                        {{ ch.title }}
+                    </h3>
+
+                    <p class="text-xs text-[var(--muted)]">
+                        วันที่สร้าง: {{ ch.created_at || '-' }}
+                    </p>
+
+                    <p v-if="ch.created_by" class="mt-1 text-xs text-[var(--muted)] line-clamp-1">
+                        โดย: {{ ch.created_by || '-' }}
+                    </p>
+
+                    <div class="mt-3">
+                        <span class="inline-block rounded-full px-3 py-1 text-xs font-semibold border"
+                            :class="badgeClass(ch.status)">
+                            {{ ch.status || '—' }}
+                        </span>
+                    </div>
                 </div>
 
                 <!-- Footer ของการ์ด (ชิดล่างเสมอ) -->
                 <div class="mt-auto flex items-center justify-between pt-4">
-                    <span class="inline-block rounded-full px-3 py-1 text-xs font-semibold border"
-                        :class="badgeClass(ch.status)">
-                        {{ ch.status || '—' }}
-                    </span>
                     <button type="button" @click.stop="openDetails(ch.id)" class="cursor-pointer rounded-lg px-3 py-2 text-xs font-semibold
                    border border-[var(--card-border)] bg-[var(--card)] text-[var(--fg)]
                    hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]">
@@ -154,7 +170,7 @@
         </div>
 
         <!-- Empty -->
-        <div v-if="!loading && visible.length === 0" class="mt-10">
+        <!-- <div v-if="!loading && visible.length === 0" class="mt-10">
             <div class="rounded-2xl border border-[var(--card-border)] bg-[var(--card)] p-10 text-center">
                 <Icon name="lucide:inbox" class="w-10 h-10 mx-auto opacity-60" />
                 <p class="mt-3 text-sm text-[var(--muted)]">ยังไม่มีแชนแนลที่ตรงกับเงื่อนไข</p>
@@ -166,7 +182,7 @@
                     </button>
                 </div>
             </div>
-        </div>
+        </div> -->
     </main>
 
     <!-- Modal: Create Channel (ใช้ v-if + state) -->
@@ -333,6 +349,7 @@ type Channel = {
     description?: string | null
     created_at?: string | null
     status?: string | null
+    created_by?: string | null
 }
 
 const { public: { apiBase } } = useRuntimeConfig()
@@ -389,7 +406,7 @@ const looksLikeHtml = (v: unknown) => typeof v === 'string' && /<!DOCTYPE|<html/
 const badgeClass = (status?: string | null) => {
     const s = (status || '').toLowerCase()
     if (s === 'public' || s === 'active') return 'bg-emerald-100 text-emerald-700 border-emerald-200'
-    if (s === 'private') return 'bg-zinc-100 text-zinc-700 border-zinc-200'
+    if (s === 'private') return 'bg-rose-100 text-rose-700 border-zinc-200'
     if (s === 'draft') return 'bg-amber-100 text-amber-800 border-amber-200'
     if (s === 'inactive') return 'bg-rose-100 text-rose-700 border-rose-200'
     return 'bg-zinc-100 text-zinc-700 border-zinc-200'
