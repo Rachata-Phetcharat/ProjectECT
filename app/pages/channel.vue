@@ -61,11 +61,11 @@
     </div>
 
     <!-- Error -->
-    <div v-if="pageErr" class="mx-auto pt-4">
+    <!-- <div v-if="pageErr" class="mx-auto pt-4">
         <div class="rounded-lg border border-rose-200 bg-rose-50 text-rose-700 text-sm px-3 py-2">
             {{ pageErr }}
         </div>
-    </div>
+    </div> -->
 
     <!-- List -->
     <main class="mx-auto pt-6 pb-12">

@@ -166,6 +166,9 @@ export const useSession = () => {
     );
   });
 
+  // ⭐ เพิ่ม role เป็น computed แยกออกมาให้ใช้สะดวก
+  const role = computed<string | null>(() => me.value?.role ?? null);
+
   return {
     // state
     isLoggedIn,
@@ -173,6 +176,7 @@ export const useSession = () => {
     token,
     me,
     displayName,
+    role, // <-- เอาออกไปใช้ข้างนอกได้แล้ว
 
     // setters
     setToken,
